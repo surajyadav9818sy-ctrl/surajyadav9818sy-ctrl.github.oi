@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Jyoti Itta Udyog - Bricks Factory</title>
+  <style>
+    /* Reset & base */
+    * { box-sizing: border-box; margin:0; padding:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    html { scroll-behavior: smooth; }
+    body { background:#f5f0e6; color:#4b3b2b; line-height:1.6; min-height:100vh; overflow-x:hidden; }
+    a { color:inherit; text-decoration:none; }
+    img { max-width:100%; display:block; border-radius:8px; }
+    button { cursor:pointer; border:none; border-radius:4px; background-color:#b7410e; color:#fff; padding:0.6em 1.2em; font-weight:600; transition:0.3s; }
+    button:hover, button:focus { background-color:#8a2c06; outline:none; }
+
+    /* Splash Screen */
+    #splash { position:fixed; inset:0; background:#b7410e; display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column; color:#fff; font-weight:700; font-size:1.5rem; transition:opacity 1s ease; }
+    #splash.hidden { opacity:0; visibility:hidden; }
+    #splash .circle { width:150px; height:150px; border-radius:50%; border:6px solid #fff; border-top-color:#f5f0e6; display:flex; justify-content:center; align-items:center; text-align:center; padding:1em; font-size:1.1rem; line-height:1.3; box-shadow:0 0 15px rgba(255 255 255 / 0.6); animation:spin 2.5s linear infinite; }
+    @keyframes spin { 0% {transform:rotate(0deg);} 100% {transform:rotate(360deg);} }
+
+    /* Navbar */
+    nav { position:sticky; top:0; background:#b7410e; box-shadow:0 2px 8px rgba(0,0,0,0.15); z-index:1000; }
+    nav .container { max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; padding:0.8em 1em; }
+    nav .logo { font-weight:700; font-size:1.3rem; color:#f5f0e6; letter-spacing:1.2px; }
+    nav ul { list-style:none; display:flex; gap:1.5em; }
+    nav ul li a { color:#f5f0e6; font-weight:600; padding:0.3em 0.5em; border-radius:4px; transition:0.3s; }
+    nav ul li a:hover, nav ul li a:focus { background-color:#8a2c06; outline:none; }
+
+    /* Sections */
+    section { max-width:1100px; margin:3em auto; padding:0 1em; }
+    h2.section-title { font-size:2rem; margin-bottom:1em; border-bottom:3px solid #b7410e; display:inline-block; padding-bottom:0.2em; color:#8a2c06; }
+
+    /* Home Section */
+    #home .hero-image { width:100%; max-height:400px; object-fit:cover; border-radius:12px; box-shadow:0 6px 15px rgba(183,65,14,0.4); margin-bottom:1.5em; }
+    #home p { font-size:1.1rem; max-width:700px; margin:0 auto; text-align:center; color:#5a4a3a; }
+
+    /* Explore Section */
+    #explore .gallery { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.2em; }
+    #explore .gallery img { border-radius:10px; box-shadow:0 4px 12px rgba(183,65,14,0.3); transition: transform 0.3s, box-shadow 0.3s; cursor:pointer; }
+    #explore .gallery img:hover, #explore .gallery img:focus { transform:scale(1.05); box-shadow:0 8px 20px rgba(183,65,14,0.6); outline:none; }
+    .map-container iframe { border-radius:12px; box-shadow:0 6px 15px rgba(183,65,14,0.4); }
+
+    /* Bricks Section */
+    #bricks .products { display:flex; flex-wrap:wrap; gap:2em; justify-content:center; }
+    #bricks .product-card { background:#fff5eb; border-radius:12px; box-shadow:0 4px 15px rgba(183,65,14,0.25); max-width:320px; flex:1 1 280px; display:flex; flex-direction:column; align-items:center; padding:1em; transition:0.3s; }
+    #bricks .product-card:hover, #bricks .product-card:focus-within { box-shadow:0 8px 25px rgba(183,65,14,0.5); outline:none; }
+    #bricks .product-card img { max-height:180px; object-fit:contain; margin-bottom:1em; border-radius:8px; }
+    #bricks .product-card h3 { margin-bottom:0.5em; color:#8a2c06; }
+    #bricks .product-card p { flex-grow:1; text-align:center; color:#5a4a3a; margin-bottom:1em; }
+
+    /* Buy Bricks Section */
+    #buy-bricks .brick-types { display:flex; flex-wrap:wrap; gap:2em; justify-content:center; margin-bottom:2em; }
+    #buy-bricks .brick-type { background:#fff5eb; border-radius:12px; box-shadow:0 4px 15px rgba(183,65,14,0.25); max-width:320px; flex:1 1 280px; display:flex; flex-direction:column; align-items:center; padding:1em; transition:0.3s; }
+    #buy-bricks .brick-type:hover, #buy-bricks .brick-type:focus-within { box-shadow:0 8px 25px rgba(183,65,14,0.5); outline:none; }
+    #buy-bricks .brick-type img { max-height:180px; object-fit:contain; margin-bottom:1em; border-radius:8px; }
+    #buy-bricks .brick-type h3 { margin-bottom:0.5em; color:#8a2c06; }
+    #buy-bricks .brick-type p { text-align:center; color:#5a4a3a; margin-bottom:1em; }
+
+    /* Form Modal */
+    #booking-form-modal { position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none; justify-content:center; align-items:center; z-index:11000; padding:1em; }
+    #booking-form-modal.active { display:flex; }
+    #booking-form-modal .form-container { background:#fff5eb; border-radius:12px; max-width:400px; width:100%; padding:2em 2.5em; box-shadow:0 8px 30px rgba(183,65,14,0.5); position:relative; }
+    #booking-form-modal h3 { margin-bottom:1em; color:#b7410e; text-align:center; }
+    #booking-form-modal label { display:block; margin-bottom:0.3em; font-weight:600; color:#5a4a3a; }
+    #booking-form-modal input, #booking-form-modal textarea, #booking-form-modal select { width:100%; padding:0.5em; margin-bottom:1em; border:1.5px solid #b7410e; border-radius:6px; font-size:1rem; font-family:inherit; resize:vertical; transition:border-color 0.3s; }
+    #booking-form-modal input:focus, #booking-form-modal textarea:focus, #booking-form-modal select:focus { border-color:#8a2c06; outline:none; }
+    #booking-form-modal textarea { min-height:80px; }
+    #booking-form-modal .form-actions { display:flex; justify-content:space-between; align-items:center; gap:1em; }
+    #booking-form-modal button.close-btn { background:#8a2c06; padding:0.5em 1em; font-weight:700; }
+    #booking-form-modal button.close-btn:hover, #booking-form-modal button.close-btn:focus { background:#b7410e; outline:none; }
+
+    /* About Section */
+    #about p { max-width:700px; margin:0 auto; font-size:1.1rem; text-align:center; color:#5a4a3a; }
+
+    /* Responsive */
+    @media(max-width:768px){
+      nav ul { gap:1em; }
+      #bricks .products, #buy-bricks .brick-types { flex-direction:column; align-items:center; }
+      #bricks .product-card, #buy-bricks .brick-type { max-width:100%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Splash Screen -->
+  <div id="splash">
+    <div class="circle">Welcome to Our Bricks Factory</div>
+  </div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="container">
+      <div class="logo">New Jyoti Itta Udyog</div>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#explore">Explore</a></li>
+        <li><a href="#bricks">Bricks</a></li>
+        <li><a href="#buy-bricks">Buy Bricks</a></li>
+        <li><a href="#about">About Us</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Home Section -->
+    <section id="home">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/AC9h4nr6L18VaPyNL6wJ3vWErRG99yFX7JpiRsf8S8RCMifzzfxYycTXJ0mh7L42yRg7522OwdXiN0p4hGQDAMTUFZWrdcs3-0Ax4OI0muYXx01PcffFFs_75ZxmISjI3VCHoUvxMj26jw=w221-h100-k-no" alt="Itta Factory Photo" class="hero-image">
+      <p>At New Jyoti Itta Udyog, we craft the highest quality bricks to build your dreams. Durable, eco-friendly, and reliable for sustainable construction.</p>
+    </section>
+
+    <!-- Explore Section -->
+    <section id="explore">
+      <h2 class="section-title">Explore Our Factory & Bricks</h2>
+      <div class="gallery">
+        <img src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=600&q=80" alt="Red Bricks">
+        <img src="https://images.unsplash.com/photo-1594149764650-c86f7e8c0f3f?auto=format&fit=crop&w=600&q=80" alt="Under Construction House">
+      </div>
+      <div class="map-container">
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!4v1693959900000!6m8!1m7!1sAtWWbTZ8YnIezeVr9AqpXg!2m2!1d27.6022477!2d82.9043076!3f283.94!4f0!5f0.7820865974627469" 
+          width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" title="Itta Factory Location">
+        </iframe>
+      </div>
+    </section>
+
+    <!-- Bricks Section -->
+    <section id="bricks">
+      <h2 class="section-title">Our Bricks Products</h2>
+      <div class="products">
+        <div class="product-card">
+          <img src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=400&q=80" alt="Red clay bricks stacked">
+          <h3>Red Clay Bricks</h3>
+          <p>Traditional, strong, and weather-resistant bricks perfect for all construction needs.</p>
+        </div>
+        <div class="product-card">
+          <img src="https://images.unsplash.com/photo-1560448204-1a1a1a1a1a1a?auto=format&fit=crop&w=400&q=80" alt="Concrete bricks stacked">
+          <h3>Concrete Bricks</h3>
+          <p>Modern, durable bricks with excellent load-bearing capacity and smooth finish.</p>
+        </div>
+        <div class="product-card">
+          <img src="https://images.unsplash.com/photo-1594149764650-c86f7e8c0f3f?auto=format&fit=crop&w=400&q=80" alt="House built using bricks">
+          <h3>Built with Our Bricks</h3>
+          <p>See the quality and beauty of our bricks in real construction projects.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Buy Bricks Section -->
+    <section id="buy-bricks">
+      <h2 class="section-title">Buy Bricks</h2>
+      <div class="brick-types">
+        <div class="brick-type">
+          <img src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=400&q=80" alt="High Quality Brick">
+          <h3>High Quality Bricks</h3>
+          <p>Perfect for long-lasting construction.</p>
+          <button class="book-btn" data-brick="High Quality Bricks">Book Now</button>
+        </div>
+        <div class="brick-type">
+          <img src="https://images.unsplash.com/photo-1560448204-1a1a1a1a1a1a?auto=format&fit=crop&w=400&q=80" alt="Standard Bricks">
+          <h3>Standard Bricks</h3>
+          <p>Affordable and reliable for all projects.</p>
+          <button class="book-btn" data-brick="Standard Bricks">Book Now</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+      <h2 class="section-title">About Us</h2>
+      <p>New Jyoti Itta Udyog has been a pioneer in brick manufacturing for over two decades. Combining traditional craftsmanship with modern technology, we produce durable, strong, and eco-friendly bricks trusted by thousands of customers.</p>
+    </section>
+  </main>
+
+  <!-- Booking Form Modal -->
+  <div id="booking-form-modal" aria-hidden="true" role="dialog" aria-labelledby="form-title">
+    <div class="form-container">
+      <h3 id="form-title">Book Your Bricks</h3>
+      <form id="booking-form" novalidate>
+        <label for="brick-type">Which bricks to buy</label>
+        <select id="brick-type" name="brickType" required>
+          <option value="">Select Brick Type</option>
+          <option value="High Quality Bricks">High Quality Bricks</option>
+          <option value="Standard Bricks">Standard Bricks</option>
+        </select>
+        <label for="description">Description (optional)</label>
+        <textarea id="description" name="description" placeholder="Any specific requirements..."></textarea>
+        <label for="contact-number">Contact Number</label>
+        <input type="text" id="contact-number" name="contact" value="9857050137" required>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="surajyadav@gmail.com" required>
+        <div class="form-actions">
+          <button type="submit">Submit</button>
+          <button type="button" class="close-btn">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Splash screen
+    const splash = document.getElementById('splash');
+    setTimeout(() => { splash.classList.add('hidden'); document.body.style.overflow='auto'; }, 4000);
+
+    // Modal logic
+    const modal = document.getElementById('booking-form-modal');
+    document.querySelectorAll('.book-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('brick-type').value = btn.dataset.brick;
+        modal.classList.add('active'); modal.setAttribute('aria-hidden','false'); modal.querySelector('select').focus();
+      });
+    });
+    document.querySelector('.close-btn').addEventListener('click', () => { modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); });
+    document.querySelector('#booking-form').addEventListener('submit', e => { e.preventDefault(); alert('Thank you for your booking! We will contact you soon.'); modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); });
+    modal.addEventListener('click', e => { if(e.target===modal){ modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); } });
+    document.addEventListener('keydown', e => { if(e.key==='Escape' && modal.classList.contains('active')) { modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); } });
+  </script>
+</body>
+</html>
